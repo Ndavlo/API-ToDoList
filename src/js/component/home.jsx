@@ -1,12 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Home = () => {
-  const [toDos, setToDos] = useState([
-    "Lamar al abogado",
-    "Lavar el coche",
-    "Preparar maletas",
-  ]);
+  const [toDos, setToDos] = useState();
   const [newTask, setNewTask] = useState("");
+
+useEffect(async () => { 
+try { 
+  let response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/nicolasdavid"
+  )
+  if (!response.ok){
+    throw response.statusText
+  }
+  let data = await response.json();
+  setToDos(data) 
+} catch (error){
+  console.error(error)
+}
+}, []);
+
+useEffect(()=> {
+console.log("componente actualizado")
+//Se actualiza la lista, se actualiza la API
+
+// Si la lista esta vacia, se elimina
+if (!toDos) { console.log("Iniciar lista")
+return
+}
+if (toDos.length == 0) {
+  console.log("Eliminar lista")
+} else {
+  //De lo contrario se actualiza
+  console.log("Actualizar lista")
+}
+}, [toDos]);
 
   function addNewTask(e) {
     if (e.key == "Enter" && newTask != "") {
@@ -24,7 +50,6 @@ const Home = () => {
   }
 
   return (
-    <body>
     <div className="container">
       <h1>To do List</h1>
       <input
@@ -35,7 +60,7 @@ const Home = () => {
         onKeyDown={addNewTask}
       />
       <ul className="list-group">
-        {toDos.map((task, index) => (
+        {toDos?.map((task, index) => (
           <li key={index} className="list-group-item">
             <span
               id="button"
@@ -44,7 +69,7 @@ const Home = () => {
             >
               X
             </span>
-            {task}
+            {task.label}
           </li>
         ))}
         <li id="footer" className="list-group-item">
@@ -54,7 +79,6 @@ const Home = () => {
         </li>
       </ul>
     </div>
-    </body>
   );
 };
 
