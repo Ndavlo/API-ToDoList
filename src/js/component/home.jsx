@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 
 const Home = () => {
-  const [toDos, setToDos] = useState();
+  const [toDos, setToDos] = useState([]);
   const [newTask, setNewTask] = useState("");
 
 useEffect(async () => { 
-try { 
+getTasks()
+}, []);
+
+const getTasks = async () => {
+  try { 
   let response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/nicolasdavid"
   )
   if (!response.ok){
@@ -16,32 +20,55 @@ try {
 } catch (error){
   console.error(error)
 }
-}, []);
-
-useEffect(()=> {
-console.log("componente actualizado")
-//Se actualiza la lista, se actualiza la API
-
-// Si la lista esta vacia, se elimina
-if (!toDos) { console.log("Iniciar lista")
-return
 }
-if (toDos.length == 0) {
-  console.log("Eliminar lista")
-} else {
-  //De lo contrario se actualiza
-  console.log("Actualizar lista")
-}
-}, [toDos]);
 
-  function addNewTask(e) {
-    if (e.key == "Enter" && newTask != "") {
-      let newToDos = [...toDos];
-      newToDos.push(newTask);
-      setToDos(newToDos);
-      setNewTask("");
+const createUser = async () => {
+  try { 
+  let response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/nicolasdavid", {
+    method: "POST",
+    body: JSON.stringify([]),
+    headers: {
+      "Content-Type": "application/json"
     }
   }
+  )
+  if (!response.ok){
+    throw response.statusText
+  }
+  alert("Usuario creado con exito")
+  console.log(response)
+  getTasks()
+} catch (error){
+  console.log(error)
+}
+}
+
+
+const removeUser = async () => {
+  try { 
+  let response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/nicolasdavid", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }
+  )
+  if (!response.ok){
+    throw response.statusText
+  }
+  console.log(response)
+setToDos([])
+} catch (error){
+  console.error(error)
+}
+}
+
+function addNewTask(e) {
+  if (e.key == "Enter" && newTask != ""){
+      setToDos([...toDos, {label: newTask, done: false}]);
+      setNewTask("");
+  }
+}
 
   function deleteTask(index) {
     let newToDo = [...toDos];
@@ -49,9 +76,37 @@ if (toDos.length == 0) {
     setToDos(newToDo);
   }
 
+  const updateToDo = async () => {
+    console.log(toDos)
+    try { 
+    let response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/nicolasdavid", {
+      method: "PUT",
+      body: JSON.stringify(toDos),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+    )
+    if (!response.ok){
+      throw response.statusText
+    }
+    console.log(response)
+    getTasks()
+  } catch (error){
+    console.log(error)
+  }
+  }
+
+
   return (
     <div className="container">
       <h1>To do List</h1>
+      <ul><p>Instrucciones:</p>
+        <li>Presiona la tecla ENTER para agregar la tarea a la lista.</li>
+        <li>Presiona "Actualizar lista" para actualizar la API con todas las tareas nuevas.</li>
+        <li>Eliminar todo elimina todas las tareas y las tareas de la API</li>
+        <li>Crear nueva lista crea un nuevo usuario con el "sample task"</li>
+        </ul>
       <input
         className="mb-4"
         type="text"
@@ -60,7 +115,7 @@ if (toDos.length == 0) {
         onKeyDown={addNewTask}
       />
       <ul className="list-group">
-        {toDos?.map((task, index) => (
+        {toDos.map((task, index) => (
           <li key={index} className="list-group-item">
             <span
               id="button"
@@ -78,6 +133,11 @@ if (toDos.length == 0) {
             : toDos.length + " tasks left, get it done!"}
         </li>
       </ul>
+      <div className="buttons">
+            <button onClick={() => removeUser()}>Eliminar Todo</button>
+            <button onClick={() => createUser()}>Crear Nueva Lista</button>
+            <button onClick={updateToDo}>Actualizar Lista</button>
+            </div>
     </div>
   );
 };

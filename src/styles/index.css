@@ -5,6 +5,9 @@
     height: 42px;
     padding-top: 15px;
 }
+input{
+  width: 400px;
+}
 
 body {
 
@@ -15,13 +18,17 @@ h1 {
     color: white;
 }
 .container{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 margin: auto;
-width: 25%;
+width: 100%;
+color: white;
 }
 
 .list-group-item {
     background-color: rgb(41, 40, 40);
-    width: 300px;
+    width: 400px;
     height: 42px;
     border-color: rgb(255, 255, 255);
     color: white;
@@ -37,4 +44,20 @@ width: 25%;
   
   .list-group-item:hover #button {
     visibility: visible;
+  }
+
+  .buttons {
+    display: flex;
+    width: 400px;
+    gap: 20px;
+padding: 10px;
+justify-content: center;
+
+
+  }
+
+  .buttons * {
+    width: 150px;
+height: 50px;
+border-radius: 10%;
   }
